@@ -1,5 +1,6 @@
 package application;
 
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,45 +12,28 @@ public class Platform extends Pane {
 	Image platformImage = new Image(ClassLoader.getSystemResourceAsStream("images/p-green.png"));
 	ImageView platformView = new ImageView(platformImage);
 	
-	public void brownPlatfrom() {
-		platformView.setImage(null);
-		platformView = new ImageView(platformImage);
-		int offsetX = 0;
-		int offsetY = 14;
-		platformView.setViewport(new Rectangle2D(offsetX, offsetY, 68, 20));
-		platformView.setFitHeight(20);
-		platformView.setFitWidth(68);
-		getChildren().addAll(this.platformView);
+	private int type;
+	
+	public Point2D platformVelocity = new Point2D(0, 0);
+	
+	public Platform(int type, int x, int y, int width, int height) {
+		platformView.setImage(platformImage);
+		platformView.setFitWidth(width);
+		platformView.setFitHeight(height);
+		platformView.setViewport(new Rectangle2D(0, 0, width, height));
+		
+		this.type = type;
+		
+		this.getChildren().add(platformView);
+		
+		this.setTranslateX(x);
+		this.setTranslateY(y);
 	}
 
-	public void brokenBrownPlatform() {
-		platformView.setImage(null);
-		platformView = new ImageView(platformImage);
-		int offsetX = 0;
-		int offsetY = 34;
-		platformView.setViewport(new Rectangle2D(offsetX, offsetY, 68, 20));
-		getChildren().addAll(this.platformView);
-	}
-	
-	public Platform(String id, int x, int y) {
-		platformView = new ImageView(platformImage);
-		platformView.setFitWidth(68);
-		platformView.setFitHeight(14);
-		setTranslateX(x);
-		setTranslateY(y);
-		
-		this.setId(id);
-		
-		if (this.getId().equals("1")) {
-			platformView.setViewport(new Rectangle2D(0, 0, 68, 14));
+	public void moveY(int value) {
+		for (int i = 0; i < Math.abs(value); i++) {			
+			this.setTranslateY(this.getTranslateY() + 1);
 		}
-		if (this.getId().equals("2")) {
-			platformView.setViewport(new Rectangle2D(0, 14, 68, 14));
-		}
-		
-		getChildren().add(platformView);
-		Game.platforms.add(this);
-		Game.gameRoot.getChildren().add(this);
 	}
 	
 	public boolean isDestroyOnce() {
@@ -58,6 +42,22 @@ public class Platform extends Pane {
 	
 	public void setDestroyOnce(boolean b) {
 		this.destroyOnce = b;
+	}
+	
+	public int getType() {
+		return type;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Platform)) return false;
+		Platform other = (Platform) obj;
+		return getTranslateX() == other.getTranslateX() && getTranslateY() == other.getTranslateY();
+	}
+	
+	@Override
+	public String toString() {
+		return "Platform: Type: " + type + " Position: x = " + getTranslateX() + " y = " + getTranslateY();
 	}
 	
 }
