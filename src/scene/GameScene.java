@@ -3,12 +3,15 @@ package scene;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 import application.Character;
+import application.Knife;
 import application.Monster;
 import application.Platform;
 import application.Settings;
 import asset.GameImage;
 import javafx.animation.AnimationTimer;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -23,6 +26,7 @@ public class GameScene {
 	public static AnimationTimer gameloop;
 	public static ArrayList<Platform> platforms = new ArrayList<Platform>();
 	public static ArrayList<Monster> monsters = new ArrayList<Monster>();
+	public static ArrayList<Knife> knifes = new ArrayList<Knife>();		//adding knife
 	public static HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
 	
 	public static Platform lastHitPlatform = null;
@@ -33,12 +37,12 @@ public class GameScene {
 	private static ImageView background = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("bg.jpg")));
 	private static ImageView topbar = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("images/topbar.png")));
 	
-	private static Character player;
+	public static Character player;
 	public static int score = 0;
 	public static int level = 0;
 	
 	public static int lastGenerateType = 1;
-	
+	public static boolean isthrowKnife = false;
 	
 	public static void init() {
 		GameImage.init();
@@ -92,6 +96,14 @@ public class GameScene {
 				if (count > 1) {
 					updatePlayer();
 					updatePlatform();
+					if (isPress(KeyCode.SPACE) && !isthrowKnife) {
+						generateKnife();
+						System.out.println("generate");
+					} else if(!isPress(KeyCode.SPACE) ) {
+						isthrowKnife = false; 
+						System.out.println("nongenerate");
+					}
+					updateKnife();
 					updateMonster();
 					System.out.println(monsters.size());
 					System.out.println(score);
@@ -166,6 +178,60 @@ public class GameScene {
 		for (Platform platform : platforms) {
 			platform.update();
 		}
+	}
+	
+	private static void generateKnife() {
+		Knife knife = new Knife();
+		knife.setdirection();
+		
+		knifes.add(knife);
+		gameRoot.getChildren().add(knife);
+		isthrowKnife = true;
+		//System.out.println("Attack!");
+	
+	}
+	
+	private static void updateKnife() {
+		if (!player.isMovingDown() && player.getTranslateY() <= 249) {
+			for(int i = 0 ; i < knifes.size() ; i++) {
+				knifes.get(i).moveY((int) player.playerVelocity.getY());
+				
+				
+			}
+//			for (Knife knife : knifes) {
+//				knife.moveY((int) player.playerVelocity.getY());
+//				
+//				if (!knife.inScene()) {
+//					knifes.remove(knife);
+//					continue;
+//				}
+//			}
+			
+		}
+		
+//		for (Node component : gameRoot.getChildren()) {
+//			if (component instanceof Knife) {
+//				if (((Knife)component).isAlreadyhit()) {
+//					knifes.remove((Knife)component);
+//					gameRoot.getChildren().remove(component);
+//				}
+//			}
+//			
+//		}
+		for (int i = 0; i < gameRoot.getChildren().size(); i++) {
+			if (gameRoot.getChildren().get(i) instanceof Knife) {
+				Knife temp = (Knife) gameRoot.getChildren().get(i);
+				if (temp.isAlreadyhit()) {
+					gameRoot.getChildren().remove(temp);
+					knifes.remove(temp);					
+				}
+			}
+		}
+		
+		for(Knife knife : knifes) {
+			knife.update();
+		}
+	
 	}
 	
 	private static void updateMonster() {
