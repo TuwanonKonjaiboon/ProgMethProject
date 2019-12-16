@@ -58,9 +58,6 @@ public class GameScene {
 		player = new Character();
 		player.setTranslateX(xPosition);
 		player.setTranslateY(500);
-//		player.translateYProperty().addListener((obs, old, newValue) -> {
-//			if ()
-//		});
 		
 		gameRoot.getChildren().addAll(platforms);
 		gameRoot.getChildren().add(player);
@@ -119,15 +116,10 @@ public class GameScene {
 		if (player.playerVelocity.getY() < 15) {
 			player.playerVelocity = player.playerVelocity.add(0, 2);
 		}
-//		if (isPress(KeyCode.SPACE)) {
-//			player.jumpPlayer();
-//			player.setCanJump(true);
-//		}
 		if (player.isFalls()) {
 			player.jumpPlayer();
 			player.setCanJump(true);
 		}
-//		System.out.println(player.playerVelocity);
 		System.out.println(player);
 		
 		player.moveY((int) player.playerVelocity.getY());
