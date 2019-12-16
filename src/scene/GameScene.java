@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import application.Character;
+import application.Monster;
 import application.Platform;
 import application.Settings;
 import asset.GameImage;
@@ -21,7 +22,7 @@ public class GameScene {
 	public static Scene scene;
 	public static AnimationTimer gameloop;
 	public static ArrayList<Platform> platforms = new ArrayList<Platform>();
-	public static ArrayList<Character> monsters = new ArrayList<Character>();
+	public static ArrayList<Monster> monsters = new ArrayList<Monster>();
 	public static HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
 	
 	public static Platform lastHitPlatform = null;
@@ -67,6 +68,7 @@ public class GameScene {
 		player.setTranslateY(500);
 		
 		gameRoot.getChildren().addAll(platforms);
+		gameRoot.getChildren().addAll(monsters);
 		gameRoot.getChildren().add(player);
 		gameRoot.setMinHeight(Settings.SCENE_HEIGHT);
 		gameRoot.setMinWidth(Settings.SCENE_WIDTH);
@@ -90,6 +92,8 @@ public class GameScene {
 				if (count > 1) {
 					updatePlayer();
 					updatePlatform();
+					updateMonster();
+					System.out.println(monsters.size());
 					System.out.println(score);
 					count = 0;
 				}
@@ -97,6 +101,12 @@ public class GameScene {
 			}
 		};
 	}
+	
+	public static void restart() {
+		
+	}
+	
+	public static boolean isGameOver = false;
 	
 	public static int clamp(int value, int min, int max) {
 		if (value < min) return min;
@@ -145,7 +155,7 @@ public class GameScene {
 				platform.moveY((int) player.playerVelocity.getY());
 				
 				if (!platform.inScene()) {
-					reGenerateLiveRandomPlatform(platform);	
+					reGenerateLiveRandomPlatform(platform);
 					continue;
 				}
 			}
@@ -158,6 +168,22 @@ public class GameScene {
 		}
 	}
 	
+	private static void updateMonster() {
+		if (!player.isMovingDown() && player.getTranslateY() <= 249) {
+			for (Monster monster : monsters) {
+				monster.moveY((int) player.playerVelocity.getY());
+			}
+		}
+		for (int i = 0; i < monsters.size(); i++) {
+			if (!monsters.get(i).inScene()) {
+				monsters.remove(i);
+			}
+		}
+		for (Monster monster : monsters) {
+			monster.update();
+		}
+	}
+
 	public static void reGenerateLiveRandomPlatform(Platform platform) {
 		
 		int color = 1;
@@ -237,10 +263,42 @@ public class GameScene {
             }
         }
         
+     // dark blue - vertical scroll
+        if ((color > 90) && (color <= 100)) {
+            type = 10;
+        }
+
+        if ((color > 100) && (color <= 105)) {
+            if (level >= 2) {
+            	if (player.getTranslateY() > 200) {
+                    if (monsters.size() < 1) {
+                        generateMonster();
+                    }
+                }
+            }
+
+            type = 1;
+        }
+
+
+        if ((color > 105) && (color <= 108)) {
+            type = 1;
+        }
+        
         platform.changeType(type);
         platform.setTranslateX(xPosition);
         platform.setTranslateY(yPosition);
         lastGenerateType = type;
+	}
+	
+	public static void generateMonster() {
+		int xPosition = clamp((int) (Math.random() * 400), 0, Settings.SCENE_WIDTH - BLOCK_SIZE);
+		int yPosition = ((int) Math.random() * 10) * (-1); 
+		
+		Monster monster = new Monster(1, xPosition, yPosition, 120, 50);
+		monsters.add(monster);
+		
+		gameRoot.getChildren().add(monster);
 	}
 	
 	public static void startGameLoop() {
