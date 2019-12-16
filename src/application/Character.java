@@ -21,6 +21,7 @@ public class Character extends Pane {
 	public Character() {
 		imageView.setFitHeight(48);
 		imageView.setFitWidth(48);
+		this.setStyle("-fx-border-color: red;");
 		getChildren().addAll(imageView);
 	}
 
@@ -37,7 +38,12 @@ public class Character extends Pane {
 			for (Platform platform : GameScene.platforms) {
 				if (isMovingDown) {
 					if (this.getBoundsInParent().intersects(platform.getBoundsInParent())) {
+						// brown
+						
 						if (this.getTranslateY() + this.getHeight() <= platform.getTranslateY() + 2) {
+							if (platform.getType() == 3) {
+								break;
+							}
 							canJump = true;
 							if (GameScene.lastHitPlatform == null) {
 								GameScene.lastHitPlatform = platform;
@@ -73,7 +79,7 @@ public class Character extends Pane {
 	
 	public void jumpPlayer() {
 		if (canJump) {
-			playerVelocity = playerVelocity.add(0, -25 - playerVelocity.getY());
+			playerVelocity = playerVelocity.add(0, -30 - playerVelocity.getY());
 			canJump = false;
 		}
 	}
