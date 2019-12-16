@@ -6,6 +6,7 @@ import java.util.HashMap;
 import application.Character;
 import application.Platform;
 import application.Settings;
+import asset.GameImage;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -29,6 +30,7 @@ public class GameScene {
 	private static Pane appRoot = new Pane();
 	private static Pane gameRoot = new Pane();
 	private static ImageView background = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("bg.jpg")));
+	private static ImageView topbar = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("images/topbar.png")));
 	
 	private static Character player;
 	public static int score = 0;
@@ -38,9 +40,13 @@ public class GameScene {
 	
 	
 	public static void init() {
+		GameImage.init();
+		
 		// Insert Background Image
 		background.setFitHeight(Settings.SCENE_HEIGHT);
 		background.setFitWidth(Settings.SCENE_WIDTH);
+		topbar.setFitWidth(Settings.SCENE_WIDTH);
+		topbar.setPreserveRatio(true);
 		
 		int shift = 550;
 		int min = 50;
@@ -64,7 +70,7 @@ public class GameScene {
 		gameRoot.getChildren().add(player);
 		gameRoot.setMinHeight(Settings.SCENE_HEIGHT);
 		gameRoot.setMinWidth(Settings.SCENE_WIDTH);
-		appRoot.getChildren().addAll(background, gameRoot);
+		appRoot.getChildren().addAll(background, gameRoot, topbar);
 		
 		scene = new Scene(appRoot, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
 		scene.setOnKeyPressed(event -> {
@@ -152,7 +158,7 @@ public class GameScene {
 		}
 	}
 	
-	private static void reGenerateLiveRandomPlatform(Platform platform) {
+	public static void reGenerateLiveRandomPlatform(Platform platform) {
 		
 		int color = 1;
 		int type = 1;

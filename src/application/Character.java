@@ -4,6 +4,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import scene.GameScene;
 
 public class Character extends Pane {
@@ -14,15 +16,17 @@ public class Character extends Pane {
 	// Player velocity vector
 	public Point2D playerVelocity = new Point2D(0, 0);
 	// Player Facing Right: 1, Left: -1 
-	public int hFacing = 1;
+	Rectangle hitBox = new Rectangle(32, 48);
 	
+	public int hFacing = 1;
 	private boolean canJump = true;
 	
 	public Character() {
 		imageView.setFitHeight(48);
 		imageView.setFitWidth(48);
-		this.setStyle("-fx-border-color: red;");
-		getChildren().addAll(imageView);
+		hitBox.setFill(Color.RED);
+		
+		getChildren().addAll(hitBox, imageView);
 	}
 
 	public void moveX(int value) {
@@ -39,22 +43,21 @@ public class Character extends Pane {
 				if (isMovingDown) {
 					if (this.getBoundsInParent().intersects(platform.getBoundsInParent())) {
 						// brown
-						
 						if (this.getTranslateY() + this.getHeight() <= platform.getTranslateY() + 2) {
 							if (platform.getType() == 3) {
+								platform.setDestroy(true);
 								break;
 							}
 							canJump = true;
-							if (GameScene.lastHitPlatform == null) {
-								GameScene.lastHitPlatform = platform;
-							} else if (GameScene.lastHitPlatform == platform) {
-								GameScene.samePlatform = true;
-							} else {
-								GameScene.lastHitPlatform = platform;
-								GameScene.samePlatform = false;
+							if (platform.getType() == 9 && platform.destroy != true) {
+								platform.setDestroy(true);
 							}
 							break;
 						}
+						hitBox.setFill(Color.BLUE);
+					}
+					else {
+						hitBox.setFill(Color.RED);
 					}
 				}
 			}

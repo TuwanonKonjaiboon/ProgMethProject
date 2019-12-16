@@ -1,17 +1,25 @@
 package application;
 
-import javafx.geometry.Point2D;
+import java.util.ArrayList;
+
+import asset.GameImage;
+import javafx.animation.FadeTransition;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
+import scene.GameScene;
 
 public class Platform extends Pane {
 	
-	public boolean destroyOnce = false;
-	Image platform1Image = new Image(ClassLoader.getSystemResourceAsStream("images/p-green.png"));
-	Image platform2Image = new Image(ClassLoader.getSystemResourceAsStream("images/p-blue.png"));
-	Image platform3Image = new Image(ClassLoader.getSystemResourceAsStream("images/brown/p-brown-1.png"));
+	Image platform1Image = GameImage.platform1Image;
+	Image platform2Image = GameImage.platform2Image;
+	ArrayList<Image> platform3Images = GameImage.platform3Images;
+	Image platform9Image = GameImage.platform9Image;
+	
+	public boolean destroy = false;
+	public int id = 0;
 	
 	ImageView platformView = new ImageView(platform1Image);
 	
@@ -46,16 +54,12 @@ public class Platform extends Pane {
 		}
 	}
 	
-	public boolean isDestroyOnce() {
-		return destroyOnce;
-	}
-	
-	public void setDestroyOnce(boolean b) {
-		this.destroyOnce = b;
-	}
-	
 	public int getType() {
 		return type;
+	}
+	
+	public void setDestroy(boolean b) {
+		this.destroy = b;
 	}
 	
 	public boolean inScene() {
@@ -78,11 +82,19 @@ public class Platform extends Pane {
 			platformView.setFitHeight(16);
 			platformView.setViewport(new Rectangle2D(0, 0, 56, 16));
 		} else if (type == 3) {
-			platformView.setImage(platform3Image);
+			platformView.setImage(platform3Images.get(0));
 			platformView.setFitWidth(68);
 			platformView.setFitHeight(20);
 			platformView.setViewport(new Rectangle2D(0, 0, 68, 20));
-		} else {
+			destroy = false;
+			id = 0;
+		} else if (type == 9) {
+			platformView.setImage(platform9Image);
+			platformView.setFitWidth(58);
+			platformView.setFitHeight(15);
+			platformView.setViewport(new Rectangle2D(0, 0, 58, 15));
+		}
+		else {
 			platformView.setImage(platform1Image);
 			platformView.setFitWidth(58);
 			platformView.setFitHeight(15);
@@ -95,12 +107,32 @@ public class Platform extends Pane {
 		if (type == 1) {
 			return;
 		} else if (type == 2) {
+			// blue
 			if (this.getTranslateX() + this.getWidth() > Settings.SCENE_WIDTH - 10) {
 				platformVelocity = -5;
 			} else if (this.getTranslateX() < 10) {
 				platformVelocity = 5;
 			}
 			moveX(platformVelocity);
+		} else if (type == 3) {
+			// brown animation
+			if (destroy) {
+				if (id < 5) {
+					platformView.setImage(platform3Images.get(++id));
+				}
+				else {
+					platformView.setImage(null);
+				}
+				moveY(5);
+			}
+		} else if (type == 9) {
+			if (destroy) {
+				FadeTransition transition = new FadeTransition(Duration.millis(200), this);
+				transition.setOnFinished(event -> {
+					GameScene.reGenerateLiveRandomPlatform(this);
+				});
+				transition.play();
+			}
 		}
 	}
 	
