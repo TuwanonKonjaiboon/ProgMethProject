@@ -12,8 +12,8 @@ import scene.GameScene;
 
 public class Character extends Pane implements Collapsible {
 	
-	Image doodleImg = new Image(ClassLoader.getSystemResourceAsStream("images/doodleR.png"));
-	ImageView imageView = new ImageView(doodleImg);
+	Image dioImg = new Image(ClassLoader.getSystemResourceAsStream("images/DioNyan.png"));
+	ImageView imageView = new ImageView(dioImg);
 	
 	// Player velocity vector
 	public Point2D playerVelocity = new Point2D(0, 0);
@@ -101,7 +101,7 @@ public class Character extends Pane implements Collapsible {
 	public boolean isMovingDown() {
 		return playerVelocity.getY() >= 0;
 	}
-
+	
 	@Override
 	public Shape hb() {
 		Shape hb = new Rectangle(this.getPrefWidth(), this.getPrefHeight());

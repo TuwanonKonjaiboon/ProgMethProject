@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 
 import application.Character;
+import application.GameOverMenu;
 import application.Knife;
 import application.Monster;
 import application.PauseMenu;
@@ -24,14 +25,13 @@ public class GameScene {
 	
 	public static final int BLOCK_SIZE = 68;
 	
-	public static Scene scene;
 	public static AnimationTimer gameloop;
 	public static ArrayList<Platform> platforms = new ArrayList<Platform>();
 	public static ArrayList<Monster> monsters = new ArrayList<Monster>();
 	public static ArrayList<Knife> knifes = new ArrayList<Knife>();		//adding knife
 	public static HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
 	public static boolean isGameOver = false;
-	public static boolean isGamePause = false;
+	public static boolean isPause = false;
 	
 	public static Platform lastHitPlatform = null;
 	public static boolean samePlatform = false;
@@ -41,6 +41,8 @@ public class GameScene {
 	private static ImageView background = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("bg.jpg")));
 	private static ImageView topbarImage = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("images/topbar.png")));
 	
+	public static Scene scene = new Scene(appRoot, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
+	
 	public static Character player;
 	public static int score = 0;
 	public static int level = 0;
@@ -48,13 +50,20 @@ public class GameScene {
 	public static int lastGenerateType = 1;
 	public static boolean isthrowKnife = false;
 	
-	public static boolean isPause = false;
 	private static PauseMenu pauseMenu = new PauseMenu();
+	private static GameOverMenu gameOverMenu =new GameOverMenu();
 	
 	public static void init() {
 		GameImage.init();
 		
-		scene = new Scene(appRoot, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
+		isGameOver = false;
+		isPause = false;
+		//debug
+		appRoot.getChildren().clear(); 
+		gameRoot.getChildren().clear();
+		platforms.clear();
+		monsters.clear();
+		knifes.clear();
 		
 		// Insert Background Image
 		
@@ -62,16 +71,6 @@ public class GameScene {
 		background.setFitWidth(Settings.SCENE_WIDTH);
 		topbarImage.setFitWidth(Settings.SCENE_WIDTH);
 		topbarImage.setPreserveRatio(true);
-		
-		Button pauseBtn = new Button();
-		pauseBtn.setPrefSize(30, 30);
-		pauseBtn.setLayoutX(Settings.SCENE_WIDTH - pauseBtn.getPrefWidth() - 10);
-		pauseBtn.setLayoutY(10);
-		pauseBtn.setOnAction(event -> {
-			isGamePause = !isGamePause;
-		});
-		pauseBtn.setFocusTraversable(false);
-		
 		
 		int shift = 550;
 		int min = 50;
@@ -90,11 +89,11 @@ public class GameScene {
 		player = new Character();
 		player.setTranslateX(xPosition);
 		player.setTranslateY(500);
-		
+			
 		gameRoot.getChildren().addAll(platforms);
 		gameRoot.getChildren().addAll(monsters);
 		gameRoot.getChildren().add(player);
-		gameRoot.getChildren().addAll(topbarImage, pauseBtn);
+		gameRoot.getChildren().addAll(topbarImage);
 		
 		gameRoot.setMinHeight(Settings.SCENE_HEIGHT);
 		gameRoot.setMinWidth(Settings.SCENE_WIDTH);
@@ -118,7 +117,7 @@ public class GameScene {
 			
 			@Override
 			public void handle(long arg0) {
-				if (count > 1 && !isPause) {
+				if ( count > 1 && !isPause ) {
 					if (appRoot.getChildren().contains(pauseMenu)) {
 						appRoot.getChildren().remove(pauseMenu);
 					}
@@ -139,13 +138,22 @@ public class GameScene {
 					System.out.println(isGameOver);
 					count = 0;
 				}
+				
+				 if (isGameOver) {
+					 appRoot.getChildren().add(gameOverMenu);
+					 stopGameLoop();
+				 }
 				count ++;
 			}
 		};
+		
+		scene.setRoot(appRoot);
 	}
 	
 	public static void restart() {
-		
+		stopGameLoop();
+		init();
+		startGameLoop();
 	}
 	
 	public static int clamp(int value, int min, int max) {

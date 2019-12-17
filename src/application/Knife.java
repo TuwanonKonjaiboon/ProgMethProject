@@ -1,12 +1,14 @@
 package application;
 
+import i.Collapsible;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Shape;
 import scene.GameScene;
 
-public class Knife extends Pane {
+public class Knife extends Pane implements Collapsible {
 	Image knifeImage = new Image(ClassLoader.getSystemResourceAsStream("images/knife/monster_fatman.png"));
 	ImageView knifeView = new ImageView(knifeImage) ;
 	
@@ -87,6 +89,17 @@ public class Knife extends Pane {
 	
 	public boolean isInScene() {
 		return inScene;
+	}
+
+	@Override
+	public Shape hb() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isCollapse(Collapsible other) {
+		return this.localToScene(hb().getBoundsInParent()).intersects(((Pane) other).localToScene(other.hb().getBoundsInParent()));
 	}
 	
 	}

@@ -24,17 +24,19 @@ import javafx.util.Duration;
 
 public class MenuScene {
 	
-	public static Scene scene;
-	 
+	
 	private static Pane appRoot = new Pane();
 	private static Button btn = new Button("Game Start");
 	private static VBox buttons = new VBox();
+	
+	public static Scene scene = new Scene(appRoot, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
 	
 	private static ImageView background = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("bg.jpg"), Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT, false, true));
 	private static ImageView logo = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("JojoTitle.png")));
 	
 	public static void init() {
-		scene = new Scene(appRoot, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
+		appRoot.getChildren().clear();
+		buttons.getChildren().clear();
 		
 		btn.setOnAction(event -> {
 			transitionToGameScene();
@@ -86,7 +88,6 @@ public class MenuScene {
 			@Override
 			public void run() {
 				GameScene.init();
-				Thread.interrupted();
 			}
 		}).run();
 		
@@ -105,7 +106,7 @@ public class MenuScene {
 				public void run() {
 					javafx.application.Platform.runLater(() -> {
 						Game.window.setScene(GameScene.scene);
-						GameScene.startGameLoop();					
+						GameScene.startGameLoop();
 					});
 				}
 			};
