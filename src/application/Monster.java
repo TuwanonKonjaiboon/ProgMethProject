@@ -7,9 +7,11 @@ import i.Collapsible;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import scene.GameScene;
 
-public class Monster extends Pane implements Collapsible{
+public class Monster extends Pane implements Collapsible {
 	
 	ArrayList<Image> monsterImage = GameImage.monster1Images;
 	ImageView imageView = new ImageView(monsterImage.get(0));

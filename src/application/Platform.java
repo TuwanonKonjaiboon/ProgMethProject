@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import asset.GameImage;
 import i.Collapsible;
-import i.Updatable;
 import javafx.animation.FadeTransition;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -15,7 +14,7 @@ import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 import scene.GameScene;
 
-public class Platform extends Pane implements Collapsible, Updatable {
+public class Platform extends Pane implements Collapsible {
 	
 	Image platform1Image = GameImage.platform1Image;
 	Image platform2Image = GameImage.platform2Image;
@@ -107,7 +106,6 @@ public class Platform extends Pane implements Collapsible, Updatable {
 		this.type = type;
 	}
 	
-	@Override
 	public void update() {
 		if (type == 1) {
 			return;

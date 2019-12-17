@@ -98,17 +98,11 @@ public class GameScene {
 		
 		gameRoot.setMinHeight(Settings.SCENE_HEIGHT);
 		gameRoot.setMinWidth(Settings.SCENE_WIDTH);
-		
-<<<<<<< Updated upstream
-		//pauseMenu.setTranslateX(Settings.SCENE_WIDTH /2);
-		//pauseMenu.setTranslateY(Settings.SCENE_HEIGHT/2);
-		
-		scene = new Scene(appRoot, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
-=======
+
+
 		appRoot.getChildren().addAll(background, gameRoot);
 
-		
->>>>>>> Stashed changes
+
 		scene.setOnKeyPressed(event -> {
 			keys.put(event.getCode(), true);
 		});
@@ -123,7 +117,6 @@ public class GameScene {
 			int count = 0;
 			
 			@Override
-<<<<<<< Updated upstream
 			public void handle(long arg0) {
 				if (count > 1 && !isPause) {
 					if (appRoot.getChildren().contains(pauseMenu)) {
@@ -140,12 +133,6 @@ public class GameScene {
 					} else if(!isPress(KeyCode.SPACE) ) {
 						isthrowKnife = false; 
 					}
-=======
-			public void handle(long now) {
-				if (count > 1 && !isGamePause) {
-					updatePlayer();
-					updatePlatform();
->>>>>>> Stashed changes
 					updateKnife();
 					updateMonster();
 					System.out.println(score);
@@ -240,23 +227,11 @@ public class GameScene {
 				knifes.get(i).moveY((int) player.playerVelocity.getY());	
 			}
 		}
-<<<<<<< Updated upstream
-		
-//		for (Node component : gameRoot.getChildren()) {
-//			if (component instanceof Knife) {
-//				if (((Knife)component).isAlreadyhit()) {
-//					knifes.remove((Knife)component);
-//					gameRoot.getChildren().remove(component);
-//				}
-//			}
-//			
-//		}
 
 		for(Knife knife : knifes) {
 			knife.update();
 		}
-=======
->>>>>>> Stashed changes
+		
 		for (int i = 0; i < gameRoot.getChildren().size(); i++) {
 			if (gameRoot.getChildren().get(i) instanceof Knife) {
 				Knife temp = (Knife) gameRoot.getChildren().get(i);
