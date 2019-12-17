@@ -7,6 +7,7 @@ import java.util.HashMap;
 import application.Character;
 import application.Knife;
 import application.Monster;
+import application.PauseMenu;
 import application.Platform;
 import application.Settings;
 import asset.GameImage;
@@ -44,10 +45,14 @@ public class GameScene {
 	public static int lastGenerateType = 1;
 	public static boolean isthrowKnife = false;
 	
+	public static boolean isPause = false;
+	private static PauseMenu pauseMenu = new PauseMenu();
+	
 	public static void init() {
 		GameImage.init();
 		
 		// Insert Background Image
+		
 		background.setFitHeight(Settings.SCENE_HEIGHT);
 		background.setFitWidth(Settings.SCENE_WIDTH);
 		topbar.setFitWidth(Settings.SCENE_WIDTH);
@@ -78,6 +83,9 @@ public class GameScene {
 		gameRoot.setMinWidth(Settings.SCENE_WIDTH);
 		appRoot.getChildren().addAll(background, gameRoot, topbar);
 		
+		//pauseMenu.setTranslateX(Settings.SCENE_WIDTH /2);
+		//pauseMenu.setTranslateY(Settings.SCENE_HEIGHT/2);
+		
 		scene = new Scene(appRoot, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
 		scene.setOnKeyPressed(event -> {
 			keys.put(event.getCode(), true);
@@ -86,6 +94,7 @@ public class GameScene {
 			keys.put(event.getCode(), false);
 		});
 		
+		
 		gameloop = new AnimationTimer() {
 			
 			// 30 FPS
@@ -93,15 +102,20 @@ public class GameScene {
 			
 			@Override
 			public void handle(long arg0) {
-				if (count > 1) {
+				if (count > 1 && !isPause) {
+					if (appRoot.getChildren().contains(pauseMenu)) {
+						appRoot.getChildren().remove(pauseMenu);
+					}
+					if (isPress(KeyCode.ESCAPE)) {
+						appRoot.getChildren().add(pauseMenu);
+						isPause = true;
+					}
 					updatePlayer();
 					updatePlatform();
 					if (isPress(KeyCode.SPACE) && !isthrowKnife) {
 						generateKnife();
-						System.out.println("generate");
 					} else if(!isPress(KeyCode.SPACE) ) {
 						isthrowKnife = false; 
-						System.out.println("nongenerate");
 					}
 					updateKnife();
 					updateMonster();
@@ -218,19 +232,20 @@ public class GameScene {
 //			}
 //			
 //		}
+
+		for(Knife knife : knifes) {
+			knife.update();
+		}
 		for (int i = 0; i < gameRoot.getChildren().size(); i++) {
 			if (gameRoot.getChildren().get(i) instanceof Knife) {
 				Knife temp = (Knife) gameRoot.getChildren().get(i);
-				if (temp.isAlreadyhit()) {
+				if (temp.isAlreadyhit() || !temp.isInScene()) {
 					gameRoot.getChildren().remove(temp);
 					knifes.remove(temp);					
 				}
 			}
 		}
 		
-		for(Knife knife : knifes) {
-			knife.update();
-		}
 	
 	}
 	
@@ -242,6 +257,10 @@ public class GameScene {
 		}
 		for (int i = 0; i < monsters.size(); i++) {
 			if (!monsters.get(i).inScene()) {
+				monsters.remove(i);
+			}
+			if (monsters.get(i).isDead()) {
+				gameRoot.getChildren().remove(monsters.get(i));
 				monsters.remove(i);
 			}
 		}

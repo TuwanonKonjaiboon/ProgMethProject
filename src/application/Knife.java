@@ -13,6 +13,7 @@ public class Knife extends Pane {
 	
 	private static int yspeed;
 	private boolean alreadyhit;
+	private boolean inScene;
 	private int xspeed;
 	private int direction;
 	public Knife() {
@@ -42,8 +43,9 @@ public class Knife extends Pane {
 	}
 	
 	private void isHit() {
-		for (Platform platform: GameScene.platforms) {
-			if (this.getBoundsInParent().intersects(platform.getBoundsInParent())) {
+		for (Monster monster: GameScene.monsters) {
+			if (this.getBoundsInParent().intersects(monster.getBoundsInParent())) {
+				monster.gothit();
 				//hitting!
 				alreadyhit = true;
 			}
@@ -53,13 +55,10 @@ public class Knife extends Pane {
 		moveX();
 		moveY();
 		isHit();
-		
-		if (!inScene()) {
-			GameScene.knifes.remove(this);
-		}
+		inScene();
 	}
 	
-	public boolean inScene() {
+	public void inScene() {
 		boolean isout = true;
 		if (this.getTranslateY() >= Settings.SCENE_HEIGHT  ) {
 			isout = false;
@@ -67,7 +66,7 @@ public class Knife extends Pane {
 		if (this.getTranslateX() >= Settings.SCENE_WIDTH) {
 			isout = false;
 		}
-		return isout;
+		inScene = isout;
 	}
 	
 	public void moveY(int value) {
@@ -87,5 +86,8 @@ public class Knife extends Pane {
 		return alreadyhit;
 	}
 	
+	public boolean isInScene() {
+		return inScene;
+	}
 	
 	}
