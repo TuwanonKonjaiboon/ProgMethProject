@@ -3,11 +3,19 @@ package scene;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.event.ChangeEvent;
+
 import application.Game;
 import application.Settings;
 import javafx.animation.FillTransition;
 import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.RotateTransition;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -26,13 +34,17 @@ public class MenuScene {
 	
 	
 	private static Pane appRoot = new Pane();
-	private static Button btn = new Button("Game Start");
 	private static VBox buttons = new VBox();
+	private static Button btn = new Button("Game Start");
 	
 	public static Scene scene = new Scene(appRoot, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
 	
 	private static ImageView background = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("bg.jpg"), Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT, false, true));
 	private static ImageView logo = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("JojoTitle.png")));
+	private static ImageView comp_1 = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("images/Dio-2.png")));
+	
+	private static AudioClip bgm;
+	private static ChangeListener<Scene> menuSceneIn;
 	
 	public static void init() {
 		appRoot.getChildren().clear();
@@ -48,42 +60,57 @@ public class MenuScene {
 		buttons.setPrefSize(200, 300);
 		buttons.getChildren().addAll(btn);
 		buttons.setAlignment(Pos.TOP_CENTER);
-		buttons.setTranslateX(Settings.SCENE_WIDTH / 2 - buttons.getPrefWidth() / 2);
+		buttons.setTranslateX(Settings.SCENE_WIDTH * 0.5 - 10);
 		buttons.setTranslateY(Settings.SCENE_HEIGHT * 0.8);
 		
 		appRoot.getChildren().addAll(background, logo);
-		appRoot.getChildren().add(buttons);
 		
-		Game.window.sceneProperty().addListener((obs, old, newValue) -> {
-			playBackgroundMusic();
-			playAnimation();
-		});
-	}
-	
-	private static void playBackgroundMusic() {
-		try {
-			AudioClip bgm = new AudioClip(ClassLoader.getSystemResource("sounds/bgm-1.mp3").toURI().toString());
-			bgm.setVolume(1.0);
-			bgm.setCycleCount(AudioClip.INDEFINITE);
-			bgm.play();
-			System.out.println("setting OK");
-		} catch (Exception e) {
-			System.out.println("error");
-		}
+		menuSceneIn = new ChangeListener<Scene>() {
+			@Override
+			public void changed(ObservableValue<? extends Scene> obs, Scene old, Scene newValue) {
+				if (newValue.getProperties().get("name") == "menu") {
+					if (!bgm.isPlaying()) {
+						bgm.play();
+					}			
+					playAnimation();
+				} else {
+					if (bgm.isPlaying()) {
+						bgm.stop();
+					}
+				}
+			}
+		};
+		
+		Game.window.sceneProperty().addListener(menuSceneIn);
 	}
 	
 	private static void playAnimation() {
-		RotateTransition rt = new RotateTransition(Duration.seconds(2), logo);
+		RotateTransition rt = new RotateTransition(Duration.seconds(1), logo);
 		rt.setAutoReverse(true);
-		rt.setToAngle(720);
+		rt.setToAngle(360);
 		rt.setCycleCount(3);
 		rt.setInterpolator(Interpolator.EASE_BOTH);
+		
+		TranslateTransition tt = new TranslateTransition(Duration.seconds(1), comp_1);
+		tt.setFromX(-300);
+		tt.setFromY(Settings.SCENE_HEIGHT * 0.6);
+		tt.setToX(0);
+		tt.setInterpolator(Interpolator.EASE_OUT);
+		comp_1.setFitWidth(300);
+		comp_1.setFitHeight(300);
+		
+		appRoot.getChildren().add(comp_1);
+		
+		rt.setOnFinished(event -> {
+			appRoot.getChildren().add(buttons);
+		});
+		tt.play();
 		rt.play();
+		
 	}
 	
 	private static void transitionToGameScene() {
 		Rectangle fadeScreen = new Rectangle(Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
-		// Pre-load
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -105,12 +132,13 @@ public class MenuScene {
 				@Override
 				public void run() {
 					javafx.application.Platform.runLater(() -> {
+						Game.window.sceneProperty().removeListener(menuSceneIn);
 						Game.window.setScene(GameScene.scene);
 						GameScene.startGameLoop();
 					});
 				}
 			};
-			timer.schedule(task, 1000); // Delay 1 seconds
+			timer.schedule(task, 1000);
 		});
 	}
 	
