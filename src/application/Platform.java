@@ -3,15 +3,19 @@ package application;
 import java.util.ArrayList;
 
 import asset.GameImage;
+import i.Collapsible;
+import i.Updatable;
 import javafx.animation.FadeTransition;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 import scene.GameScene;
 
-public class Platform extends Pane {
+public class Platform extends Pane implements Collapsible, Updatable {
 	
 	Image platform1Image = GameImage.platform1Image;
 	Image platform2Image = GameImage.platform2Image;
@@ -103,6 +107,7 @@ public class Platform extends Pane {
 		this.type = type;
 	}
 	
+	@Override
 	public void update() {
 		if (type == 1) {
 			return;
@@ -146,6 +151,17 @@ public class Platform extends Pane {
 	@Override
 	public String toString() {
 		return "Platform: Type: " + type + " Position: x = " + getTranslateX() + " y = " + getTranslateY();
+	}
+
+	@Override
+	public Shape hb() {
+		Shape hb = new Rectangle(this.getWidth(), this.getHeight());
+		return hb;
+	}
+
+	@Override
+	public boolean isCollapse(Collapsible other) {
+		return false;
 	}
 	
 }

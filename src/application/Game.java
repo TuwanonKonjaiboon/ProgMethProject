@@ -3,6 +3,7 @@ package application;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import scene.GameScene;
+import scene.MenuScene;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
@@ -20,19 +21,11 @@ public class Game extends Application {
 		try {
 			
 			window = primaryStage;
+			MenuScene.init();
 			
-			Scene scene = new Scene(tempRoot, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
-			
-			Button btn = new Button("Game Start");
-			btn.setOnAction(event -> {
-				GameScene.init();
-				window.setScene(GameScene.scene);
-				GameScene.startGameLoop();
-			});
-			tempRoot.getChildren().add(btn);
 			window.setTitle("Jojo Jump Demo");
+			window.setScene(MenuScene.scene);
 			window.setResizable(false);
-			window.setScene(scene);
 			window.show();
 			
 			

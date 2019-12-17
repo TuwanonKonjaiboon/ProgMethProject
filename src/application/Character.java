@@ -1,14 +1,16 @@
 package application;
 
+import i.Collapsible;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import scene.GameScene;
 
-public class Character extends Pane {
+public class Character extends Pane implements Collapsible {
 	
 	Image doodleImg = new Image(ClassLoader.getSystemResourceAsStream("images/doodleR.png"));
 	ImageView imageView = new ImageView(doodleImg);
@@ -16,7 +18,8 @@ public class Character extends Pane {
 	// Player velocity vector
 	public Point2D playerVelocity = new Point2D(0, 0);
 	// Player Facing Right: 1, Left: -1 
-	Rectangle hitBox = new Rectangle(32, 48);
+	
+	Input input;
 	
 	public int hFacing = 1;
 	private boolean canJump = true;
@@ -24,9 +27,12 @@ public class Character extends Pane {
 	public Character() {
 		imageView.setFitHeight(48);
 		imageView.setFitWidth(48);
-		hitBox.setFill(Color.RED);
+		this.setPrefSize(32, 48);
 		
-		getChildren().addAll(hitBox, imageView);
+		input = new Input(GameScene.scene);
+		input.addListeners();
+		
+		getChildren().addAll(imageView);
 	}
 
 	public void moveX(int value) {
@@ -40,8 +46,9 @@ public class Character extends Pane {
 		boolean isMovingDown = value > 0;
 		for (int i = 0; i < Math.abs(value); i++) {
 			for (Platform platform : GameScene.platforms) {
+				if (GameScene.isGameOver) break;
 				if (isMovingDown) {
-					if (this.getBoundsInParent().intersects(platform.getBoundsInParent())) {
+					if (this.isCollapse(platform)) {
 						// brown
 						if (this.getTranslateY() + this.getHeight() <= platform.getTranslateY() + 2) {
 							if (platform.getType() == 3) {
@@ -54,30 +61,26 @@ public class Character extends Pane {
 							}
 							break;
 						}
-						hitBox.setFill(Color.BLUE);
-					}
-					else {
-						hitBox.setFill(Color.RED);
 					}
 				}
 			}
+			for (Monster monster : GameScene.monsters) {
+				// Hit monster, then Game Over!!!
+				if (this.isCollapse(monster)) {
+					GameScene.isGameOver = true;
+				}
+			}
 			if (this.getTranslateY() < 250 && this.playerVelocity.getY() < 0) return;
-			this.setTranslateY(this.getTranslateY() + (isMovingDown ? 1: -1));			
+			this.setTranslateY(this.getTranslateY() + (isMovingDown ? 1: -1));		
 		}
 	}
 	
 	public boolean isFalls() {
 		boolean falls = false;
-		if (this.getTranslateY() >= 550) {
+		if (this.getTranslateY() > 600) {
 			falls = true;
 		}
-		
 		return falls;
-	}
-	
-	public boolean ifHitPlatform() {
-		boolean hit = true;
-		return hit;
 	}
 	
 	public void jumpPlayer() {
@@ -97,6 +100,17 @@ public class Character extends Pane {
 	
 	public boolean isMovingDown() {
 		return playerVelocity.getY() >= 0;
+	}
+
+	@Override
+	public Shape hb() {
+		Shape hb = new Rectangle(this.getPrefWidth(), this.getPrefHeight());
+		return hb;
+	}
+
+	@Override
+	public boolean isCollapse(Collapsible other) {
+		return this.localToScene(hb().getBoundsInParent()).intersects(((Pane) other).localToScene(other.hb().getBoundsInParent()));
 	}
 	
 }

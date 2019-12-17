@@ -1,31 +1,25 @@
 package application;
 
+import java.io.File;
+
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.util.Duration;
 
 public class Sound {
 	
 	MediaPlayer mediaPlayer;
 	
-	public Sound(String url) {
-		Media sound = new Media(ClassLoader.getSystemResourceAsStream(url).toString());
+	public Sound(String url) throws Exception {
+		Media sound = new Media(new File(url).toURI().toString());
 		mediaPlayer = new MediaPlayer(sound);
-		
-		mediaPlayer.play();
-		if (url == "menu.wav") {
-			mediaPlayer.setOnEndOfMedia(new Runnable() {
-				
-				@Override
-				public void run() {
-					mediaPlayer.seek(Duration.ZERO);
-				}
-			});
-		}
-				
+		mediaPlayer.setAutoPlay(true);
 	}
 	
 	public MediaPlayer getMediaPlayer() {
 		return mediaPlayer;
+	}
+	
+	public void play() {
+		mediaPlayer.play();
 	}
 }

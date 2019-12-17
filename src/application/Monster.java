@@ -3,12 +3,13 @@ package application;
 import java.util.ArrayList;
 
 import asset.GameImage;
+import i.Collapsible;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import scene.GameScene;
 
-public class Monster extends Pane {
+public class Monster extends Pane implements Collapsible{
 	
 	ArrayList<Image> monsterImage = GameImage.monster1Images;
 	ImageView imageView = new ImageView(monsterImage.get(0));
@@ -21,8 +22,9 @@ public class Monster extends Pane {
 		alreadyhit = false;
 		imageView.setFitHeight(height);
 		imageView.setFitWidth(width);
-		imageView.setPreserveRatio(true);
-		getChildren().add(imageView);
+		this.setPrefSize(width, height);
+		
+		getChildren().addAll(imageView);
 	}
 	public boolean isDead() {
 		return alreadyhit;
@@ -49,5 +51,17 @@ public class Monster extends Pane {
 			in = false;
 		}
 		return in;
+	}
+
+	@Override
+	public Shape hb() {
+		Shape hb = new Rectangle(this.getPrefWidth(), this.getPrefHeight() / 2);
+		hb.setTranslateY(20);
+		return hb;
+	}
+
+	@Override
+	public boolean isCollapse(Collapsible other) {
+		return this.localToScene(hb().getBoundsInParent()).intersects(((Pane) other).localToScene(other.hb().getBoundsInParent()));
 	}
 }
