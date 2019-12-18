@@ -18,7 +18,6 @@ import asset.GameSounds;
 import javafx.animation.AnimationTimer;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -111,7 +110,7 @@ public class GameScene {
 		playerBGM.setVolume(0.5);
 		playerBGM.setOnEndOfMedia(() -> {
 			playerBGM.seek(Duration.ZERO);
-		});
+		}); 
 		
 		konoDioDaSound.setOnEndOfMedia(() -> { konoDioDaSound.stop(); });
 		yareSound.setOnEndOfMedia(() -> { yareSound.stop(); });
