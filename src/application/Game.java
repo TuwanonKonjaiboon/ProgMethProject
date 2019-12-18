@@ -13,8 +13,6 @@ public class Game extends Application {
 	
 	public static Stage window;
 	
-	Pane tempRoot = new Pane();
-	
 	@Override
 	public void init() throws Exception {
 		super.init();

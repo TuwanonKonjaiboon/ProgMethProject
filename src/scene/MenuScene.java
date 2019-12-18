@@ -6,6 +6,7 @@ import java.util.TimerTask;
 import application.Game;
 import application.Settings;
 import asset.ButtonStyles;
+import asset.GameImage;
 import asset.GameSounds;
 import javafx.animation.Animation;
 import javafx.animation.FillTransition;
@@ -38,10 +39,10 @@ public class MenuScene {
 	
 	public static Scene scene = new Scene(appRoot, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
 	
-	private static ImageView background = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("bg.jpg"), Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT, false, true));
-	private static ImageView logo = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("JojoTitle.png")));
-	private static ImageView comp_1 = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("images/Dio-2.png")));
-	private static ImageView eff_1 = new ImageView(new Image(ClassLoader.getSystemResourceAsStream("images/effect2.png")));
+	private static ImageView background = new ImageView(GameImage.backgroundImage);
+	private static ImageView logo = new ImageView(GameImage.logo);
+	private static ImageView comp_1 = new ImageView(GameImage.DioMenuSceneImage);
+	private static ImageView eff_1 = new ImageView(GameImage.GoGoEffectImage);
 	
 	private static MediaPlayer playerBGM = new MediaPlayer(GameSounds.mainBGM);
 	private static boolean isBGMPlaying = false;
@@ -51,6 +52,9 @@ public class MenuScene {
 	public static void init() {
 		appRoot.getChildren().clear();
 		buttons.getChildren().clear();
+		
+		background.setFitWidth(Settings.SCENE_WIDTH);
+		background.setFitHeight(Settings.SCENE_HEIGHT);
 		
 		btn.setStyle(ButtonStyles.defaultStyle);
 		btn.setOnAction(event -> {

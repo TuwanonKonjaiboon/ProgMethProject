@@ -73,7 +73,6 @@ public class GameScene {
 	public static int lastGenerateType = 1;
 	
 	public static boolean isthrowKnife = false;
-//	private static MediaPlayer throwKnifeSound = new MediaPlayer(GameSounds);
 	
 	private static ChangeListener<Scene> gameSceneIn;
 	private static ChangeListener<Duration> gameOverEffect;
@@ -143,6 +142,7 @@ public class GameScene {
 		scoreText.setFill(Color.BLACK);
 		scoreText.setStyle("-fx-border-color: red");
 		
+		// Add Event Button
 		gameOverMenu.getGameOverBox().getRestartButton().setOnAction(event -> {
 			GameScene.restart();
 		});
@@ -221,9 +221,6 @@ public class GameScene {
 					updateKnife();
 					updateMonster();
 					
-					System.out.println(score);
-					System.out.println(isGameOver);
-					
 					count = 0;
 				}
 				
@@ -261,7 +258,6 @@ public class GameScene {
 		gameOverEffect = new ChangeListener<Duration>() {
 			@Override
 			public void changed(ObservableValue<? extends Duration> obs, Duration old, Duration newValue) {
-				System.out.println(toBeContinueSound.getCurrentTime().toSeconds());
 				if (toBeContinueSound.getCurrentTime().toSeconds() >= Duration.seconds(45).toSeconds()) {
 					appRoot.getChildren().add(gameOverMenu);
 					stopGameLoop();
@@ -269,7 +265,6 @@ public class GameScene {
 					scoreText.setTextAlignment(TextAlignment.CENTER);
 					scoreText.setFont(new Font(30));
 					scoreText.setFill(Color.WHITESMOKE);
-					System.out.println(scoreText.getWrappingWidth());
 					scoreText.setTranslateX(Settings.SCENE_WIDTH / 2 - scoreText.getBoundsInParent().getWidth() / 2);
 					scoreText.setTranslateY(230);
 					
@@ -294,8 +289,8 @@ public class GameScene {
 			
 			@Override
 			public void run() {
-				toBeContinueSound.setStartTime(Duration.seconds(40));
 				toBeContinueSound.currentTimeProperty().addListener(gameOverEffect);
+				toBeContinueSound.setStartTime(Duration.seconds(41));
 				toBeContinueSound.play();
 			}
 		};
@@ -360,7 +355,6 @@ public class GameScene {
 		if (player.isFalls()) {
 			isGameOver = true;
 		}
-		System.out.println(player);
 		player.moveY((int) player.playerVelocity.getY());
 		player.update();
 	}

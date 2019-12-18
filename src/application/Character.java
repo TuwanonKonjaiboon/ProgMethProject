@@ -38,7 +38,6 @@ public class Character extends Pane implements Collapsible {
 	}
 	
 	public void moveY(int value) {
-		System.out.println(this.imageView.getFitHeight());
 		boolean isMovingDown = value > 0;
 		for (int i = 0; i < Math.abs(value); i++) {
 			for (Platform platform : GameScene.platforms) {

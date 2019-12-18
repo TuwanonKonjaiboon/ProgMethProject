@@ -1,5 +1,6 @@
 package application;
 
+import asset.GameImage;
 import i.Collapsible;
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
@@ -15,8 +16,7 @@ import javafx.util.Duration;
 import scene.GameScene;
 
 public class Knife extends Pane implements Collapsible {
-	Image knifeImage = new Image(ClassLoader.getSystemResourceAsStream("images/knife/knife.png"));
-	ImageView knifeView = new ImageView(knifeImage) ;
+	ImageView knifeView = new ImageView(GameImage.knifeImage) ;
 	
 	private static int yspeed;
 	private boolean alreadyhit;
