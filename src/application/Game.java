@@ -1,11 +1,10 @@
 package application;
 
+import asset.GameImage;
+import asset.GameSounds;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import scene.GameScene;
 import scene.MenuScene;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 
 
@@ -15,6 +14,13 @@ public class Game extends Application {
 	public static Stage window;
 	
 	Pane tempRoot = new Pane();
+	
+	@Override
+	public void init() throws Exception {
+		super.init();
+		GameSounds.init();
+		GameImage.init();
+	}
 	
 	@Override
 	public void start(Stage primaryStage) {

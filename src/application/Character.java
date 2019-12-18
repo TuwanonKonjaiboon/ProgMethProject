@@ -1,36 +1,31 @@
 package application;
 
+import java.util.ArrayList;
+
+import asset.GameImage;
 import i.Collapsible;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import scene.GameScene;
 
 public class Character extends Pane implements Collapsible {
 	
-	Image dioImg = new Image(ClassLoader.getSystemResourceAsStream("images/DioNyan.png"));
-	ImageView imageView = new ImageView(dioImg);
+	ArrayList<Image> dioImages = GameImage.dioImages;
+	ImageView imageView = new ImageView(dioImages.get(0));
 	
 	// Player velocity vector
 	public Point2D playerVelocity = new Point2D(0, 0);
-	// Player Facing Right: 1, Left: -1 
 	
-	Input input;
-	
-	public int hFacing = 1;
 	private boolean canJump = true;
 	
 	public Character() {
-		imageView.setFitHeight(48);
 		imageView.setFitWidth(48);
-		this.setPrefSize(32, 48);
-		
-		input = new Input(GameScene.scene);
-		input.addListeners();
+		imageView.setFitHeight(110);
+		this.setPrefSize(imageView.getFitWidth(), imageView.getFitHeight());
 		
 		getChildren().addAll(imageView);
 	}
@@ -43,6 +38,7 @@ public class Character extends Pane implements Collapsible {
 	}
 	
 	public void moveY(int value) {
+		System.out.println(this.imageView.getFitHeight());
 		boolean isMovingDown = value > 0;
 		for (int i = 0; i < Math.abs(value); i++) {
 			for (Platform platform : GameScene.platforms) {
@@ -50,7 +46,7 @@ public class Character extends Pane implements Collapsible {
 				if (isMovingDown) {
 					if (this.isCollapse(platform)) {
 						// brown
-						if (this.getTranslateY() + this.getHeight() <= platform.getTranslateY() + 2) {
+						if (this.getTranslateY() + this.getHeight() <= platform.getTranslateY() + 5) {
 							if (platform.getType() == 3) {
 								platform.setDestroy(true);
 								break;
@@ -65,14 +61,60 @@ public class Character extends Pane implements Collapsible {
 				}
 			}
 			for (Monster monster : GameScene.monsters) {
-				// Hit monster, then Game Over!!!
+				if (GameScene.isGameOver || GameScene.isPause) break;
 				if (this.isCollapse(monster)) {
+					if (isMovingDown) {
+						if (this.isCollapse(monster)) {
+							// brown
+							if (this.getTranslateY() + this.getHeight() <= monster.getTranslateY() + 20) {
+								canJump = true;
+								monster.gothit();
+								break;
+							}
+						}
+					}
 					GameScene.isGameOver = true;
 				}
 			}
 			if (this.getTranslateY() < 250 && this.playerVelocity.getY() < 0) return;
 			this.setTranslateY(this.getTranslateY() + (isMovingDown ? 1: -1));		
 		}
+	}
+	
+	public void update() {
+		if (GameScene.isGameOver) {
+			if (imageView.getImage() != dioImages.get(3)) {
+				imageView.setImage(dioImages.get(3));
+				imageView.setFitWidth(100);
+				imageView.setFitHeight(100);
+			}
+			return;
+		}
+		if (GameScene.isPause) {
+			if (imageView.getImage() != dioImages.get(2)) {
+				imageView.setImage(dioImages.get(2));
+				imageView.setFitWidth(150);
+				imageView.setFitHeight(150);
+				imageView.setTranslateX(this.getPrefWidth() / 2 - imageView.getFitWidth() / 2);
+			}
+			return;
+		}
+		if (isMovingDown()) {
+			if (imageView.getImage() != dioImages.get(1)) {
+				imageView.setImage(dioImages.get(1));
+				imageView.setFitWidth(55);
+				imageView.setFitHeight(100);
+				imageView.setTranslateX(this.getPrefWidth() / 2 - imageView.getFitWidth() / 2);
+			}
+		} else {
+			if (imageView.getImage() == dioImages.get(1)) {
+				imageView.setImage(dioImages.get(0));
+				imageView.setFitWidth(48);
+				imageView.setFitHeight(100);
+				imageView.setTranslateX(this.getPrefWidth() / 2 - imageView.getFitWidth() / 2);
+			}
+		}
+		
 	}
 	
 	public boolean isFalls() {
@@ -104,7 +146,8 @@ public class Character extends Pane implements Collapsible {
 	
 	@Override
 	public Shape hb() {
-		Shape hb = new Rectangle(this.getPrefWidth(), this.getPrefHeight());
+		Shape hb = new Rectangle(this.getPrefWidth() / 2, this.getPrefHeight());
+		hb.setTranslateX(this.getPrefWidth() / 2 - hb.getBoundsInParent().getWidth() / 2);
 		return hb;
 	}
 

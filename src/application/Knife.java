@@ -1,15 +1,21 @@
 package application;
 
 import i.Collapsible;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.util.Duration;
 import scene.GameScene;
 
 public class Knife extends Pane implements Collapsible {
-	Image knifeImage = new Image(ClassLoader.getSystemResourceAsStream("images/knife/monster_fatman.png"));
+	Image knifeImage = new Image(ClassLoader.getSystemResourceAsStream("images/knife/knife.png"));
 	ImageView knifeView = new ImageView(knifeImage) ;
 	
 	private static int yspeed;
@@ -20,21 +26,33 @@ public class Knife extends Pane implements Collapsible {
 	public Knife() {
 		this.setTranslateX(GameScene.player.getTranslateX());
 		this.setTranslateY(GameScene.player.getTranslateY());
-		yspeed = 5;
+		xspeed = 0;
+		yspeed = 20;
 		alreadyhit = false;
 		direction = 0;
-		xspeed = 0;
+		
 		knifeView.setFitHeight(48);
 		knifeView.setFitWidth(48);
+		this.setRotate(50);
+		this.setScaleX(1.2);
+		this.setScaleY(1.2);
+		
+		RotateTransition rt = new RotateTransition(Duration.millis(500), this);
+		rt.setCycleCount(Animation.INDEFINITE);
+		rt.setInterpolator(Interpolator.LINEAR);
+		rt.setFromAngle(0);
+		rt.setToAngle(360);
+		rt.play();
+		
 		this.getChildren().add(knifeView);
 	}
 	
 	public void setdirection() {
 		if (GameScene.isPress(KeyCode.RIGHT)) {
-			direction = 1;
+			direction = 3;
 		}	
 		else if (GameScene.isPress(KeyCode.LEFT)) {
-			direction = -1;
+			direction = -3;
 		}	
 		else {
 			direction = 0;
@@ -45,9 +63,8 @@ public class Knife extends Pane implements Collapsible {
 	
 	private void isHit() {
 		for (Monster monster: GameScene.monsters) {
-			if (this.getBoundsInParent().intersects(monster.getBoundsInParent())) {
+			if (this.isCollapse(monster)) {
 				monster.gothit();
-				//hitting!
 				alreadyhit = true;
 			}
 		}
@@ -80,7 +97,7 @@ public class Knife extends Pane implements Collapsible {
 		this.setTranslateX(this.getTranslateX() + xspeed);
 	}
 	public void moveY() {
-			this.setTranslateY(this.getTranslateY() - yspeed);
+		this.setTranslateY(this.getTranslateY() - yspeed);
 	}
 
 	public boolean isAlreadyhit() {
@@ -93,8 +110,10 @@ public class Knife extends Pane implements Collapsible {
 
 	@Override
 	public Shape hb() {
-		// TODO Auto-generated method stub
-		return null;
+		Shape hb = new Rectangle(30, 10, Color.BROWN);
+		hb.setTranslateX(knifeView.getFitWidth() / 2 - hb.getBoundsInParent().getWidth() / 2);
+		hb.setTranslateY(knifeView.getFitHeight() / 2 - hb.getBoundsInParent().getHeight() / 2);
+		return hb;
 	}
 
 	@Override

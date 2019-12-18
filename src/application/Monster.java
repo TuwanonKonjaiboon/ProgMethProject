@@ -9,27 +9,39 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import scene.GameScene;
 
 public class Monster extends Pane implements Collapsible {
 	
-	ArrayList<Image> monsterImage = GameImage.monster1Images;
-	ImageView imageView = new ImageView(monsterImage.get(0));
-	private boolean alreadyhit;
-	int id = 0;
+	private boolean alreadyhit = false;
+	private ArrayList<Image> monsterImage = GameImage.monsterImages;
 	
-	public Monster(int type, int x, int y, int width, int height) {
-		setTranslateX(x);
-		setTranslateY(y);
+	ImageView imageView = new ImageView(monsterImage.get(0));
+	
+	public Monster(int type, int x, int y) {
+		this.setTranslateX(x);
+		this.setTranslateY(y);
+		
 		alreadyhit = false;
-		imageView.setFitHeight(height);
-		imageView.setFitWidth(width);
-		this.setPrefSize(width, height);
+		
+		setImageType(type);
 		
 		getChildren().addAll(imageView);
 	}
+	
+	
 	public boolean isDead() {
 		return alreadyhit;
+	}
+	
+	public void setImageType(int type) {
+		imageView.setImage(monsterImage.get(type));
+		if (type == 0) {
+			imageView.setFitWidth(80);
+			imageView.setFitHeight(100);
+		} else if (type == 1) {
+			imageView.setFitWidth(100);
+			imageView.setFitHeight(120);
+		}
 	}
 	
 	public void moveY(int value) {
@@ -39,8 +51,6 @@ public class Monster extends Pane implements Collapsible {
 	}
 	
 	public void update() {
-		imageView.setImage(monsterImage.get(++id % 3));
-		
 	}
 	
 	public void gothit() {
@@ -57,8 +67,7 @@ public class Monster extends Pane implements Collapsible {
 
 	@Override
 	public Shape hb() {
-		Shape hb = new Rectangle(this.getPrefWidth(), this.getPrefHeight() / 2);
-		hb.setTranslateY(20);
+		Shape hb = new Rectangle(imageView.getFitWidth(), imageView.getFitHeight());
 		return hb;
 	}
 

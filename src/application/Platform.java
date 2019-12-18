@@ -25,9 +25,7 @@ public class Platform extends Pane implements Collapsible {
 	public int id = 0;
 	
 	ImageView platformView = new ImageView(platform1Image);
-	
 	private int platformVelocity = 5;
-	
 	private int type;
 	
 	public Platform(int type, int x, int y, int width, int height) {
@@ -153,7 +151,7 @@ public class Platform extends Pane implements Collapsible {
 
 	@Override
 	public Shape hb() {
-		Shape hb = new Rectangle(this.getWidth(), this.getHeight());
+		Shape hb = new Rectangle(platformView.getFitWidth(), platformView.getFitHeight());
 		return hb;
 	}
 
