@@ -203,7 +203,7 @@ public class GameScene {
 						appRoot.getChildren().remove(pauseMenu);
 					}
 					
-					if (isPress(KeyCode.ESCAPE)) {
+					if (isPress(KeyCode.ESCAPE) && !isGameOver) {
 						pauseSound.play();
 						playerBGM.pause();
 						isBGMPlaying = false;

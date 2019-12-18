@@ -67,7 +67,7 @@ public class MenuScene {
 		buttons.setTranslateY(Settings.SCENE_HEIGHT * 0.8);
 		
 		playerBGM.setCycleCount(MediaPlayer.INDEFINITE);
-		playerBGM.setVolume(1.0);
+		playerBGM.setVolume(0.8);
 		
 		scene.getProperties().put("name", "menu");
 		
